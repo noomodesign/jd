@@ -1,0 +1,16 @@
+extends /_layouts/main
+
+block variables
+  - var pageData = cms.homepage
+  //- - var SEO = pageData.seo
+  //- - var preorderForm = pageData.preorderForm
+  //- - var colorOptions = pageData.colorOptions
+  //- - var pageBody = pageData.body
+
+
+block content
+  +home-intro-section()
+  +home-visionary-intro-section()
+  +home-visionary-section()
+  +home-longevity-intro-section()
+  +home-floating-cards-section()

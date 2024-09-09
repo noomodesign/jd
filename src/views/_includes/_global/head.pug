@@ -1,0 +1,42 @@
+- var SEO = {metaTitle: 'Jasmina'} || SEO || cms.globalInfo?.seo
+- var URL = filters.getPathWithDomain(page.url)
+
+head
+  title=SEO.metaTitle
+  meta(charset='utf-8')
+  meta(name="theme-color" content="#000000")
+  meta(name="viewport" content="width=device-width, initial-scale=1")
+
+  //- if SEO.metaDescription
+  //-   meta(name="description" content=SEO.metaDescription)
+  //- if SEO.keywords
+  //-   meta(name="keywords" content=SEO.keywords)
+
+  meta(property="og:type" content="website")
+  meta(property="og:url" content=URL)
+  meta(property="og:title" content=SEO.metaTitle)
+  meta(property="og:description" content=SEO.metaDescription)
+  meta(name="twitter:card" content="summary_large_image")
+  meta(name="twitter:url" content=URL)
+  meta(name="twitter:title" content=SEO.metaTitle)
+  meta(name="twitter:description" content=SEO.metaDescription)
+  //- if SEO.metaImage?.data
+  //-   meta(property="og:image" content=SEO.metaImage?.data.attributes.url)
+  //-   meta(name="twitter:image" content=SEO.metaImage?.data.attributes.url)
+
+  link(rel="preconnect" href="https://fonts.googleapis.com")
+  link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+  link(href="https://fonts.googleapis.com/css2?family=Taviraj:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet")
+  link(href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet")
+
+
+
+  if site.production
+    link(rel="preload", href=assets['main.css'] as="style")
+    link(rel="stylesheet", href=assets['main.css'] as="text/css" data-keep-asset)
+  else
+    link(rel="stylesheet", href=assets['main.css'] as="text/css" data-keep-asset)
+
+  block head
+
+  block fontFace

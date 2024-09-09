@@ -1,0 +1,951 @@
+
+
+mixin button(props = {})
+  -
+    var theme = props.theme || 'primary'
+    var size = props.size
+    var attr = props.attr
+    var type = props.type
+    var iconAttr = props.iconAttr
+    var text = props.text
+    var active = props.active
+    var external = props.external
+    var icon = props.icon
+    var svg = props.svg || 'arrow-right'
+    var iconPrepend = props.iconPrepend || false
+    var tag = attr && attr.href ? 'a' : 'button';
+    var animationType = props.animationType || 'btn-icon-movement--right'
+    var themes = {
+      primary: 'btn--primary',
+      secondary: 'btn--secondary',
+    }
+
+  #{tag}(type=(tag == 'button') ? type || 'button': false class=`btn` target=external && '_blank' class=themes[theme] class=active ? 'is-active' : false)&attributes(attr)
+    | !{text}
+    if block
+      block
+
+
+
+mixin picture(props = {}, lazy = true)
+  - var url = props.local ? props.url : filters.getUploadsPath(props.url)
+  - var alt = props.alternativeText || 'image description'
+  - var attr = props.attr
+  - var width = props.width
+  - var height = props.height
+  - var disableResponsive = props.disableResponsive
+  - var hideBackground = props.hideBackground
+  - var aspect = (width / height)
+  - var formats = props.formats
+  - var mobileUrl = props.mobileUrl || url
+  - var baseImageClass = props.baseImageClass || 'w-full'
+
+  picture(class=`w-full h-auto flex` style=aspect && `--aspect: ${aspect}` class=props.pictureClass)&attributes(attr)
+    if !disableResponsive
+      source(
+        media=`(min-width: 1000px)`
+        data-srcset=lazy && url
+        srcset=!lazy && url)
+
+    img(
+      class=`block`
+      class=baseImageClass
+      class=props.imageClass
+      class=lazy ? 'opacity-0' : false
+      data-component=lazy ? "lazyload" : false
+      data-src=lazy ? disableResponsive ? url : mobileUrl : false
+      src=lazy ? false : disableResponsive ? url : mobileUrl
+      alt=alt || 'image description'
+      width=width
+      height=height
+      draggable="false"
+    )
+
+mixin parallax-media(props = {})
+  -
+    var baseClass = props.baseClass
+    var parallaxAttr = props.parallaxAttr
+    var speed = props.speed || 3
+    var attr = Object.assign({}, {
+      class: 'h-full overflow-hidden',
+    }, props.attr || {})
+
+    var parallax = Object.assign({}, {
+      'data-animation': 'parallax',
+      'data-scroll-speed': speed,
+      'data-start': 'top bottom+=100',
+      'data-end': 'bottom top-=100'
+    }, props.parallax || {})
+
+  div(class="relative w-full overflow-hidden" class=baseClass)&attributes(attr)
+    div(class="h-full")&attributes(parallax)&attributes(parallaxAttr)
+      if block
+        block
+
+mixin wys(props = {})
+  - var attr = props.attr
+  - var bodyCopy = props.bodyCopy
+  - var resetLast = props.resetLast !== undefined ? props.resetLast : true
+  - var animation = props.animation
+
+  div(class="wysiwyg" class=resetLast && 'reset-last')&attributes(attr, animation)
+    if bodyCopy
+      | !{bodyCopy}
+
+mixin form-control(props, secondaryStyle)
+  - var elType = props.type
+  - var holderAttr = props.holderAttr
+
+  div(class="form-control")
+    if elType === 'checkbox'
+      label(class="flex items-baseline")
+        input(type="checkbox")&attributes(props.attr)
+        if block
+          block
+        else
+          | !{props.label}
+    else if elType === 'select'
+      - var options = props.options
+      div(class="group relative input-group")&attributes(holderAttr)
+        select(class="js-custom-select")&attributes(props.attr)
+          option(value="" disabled selected)=props.placeholder
+          each item in options
+            option(value=item.code data-id=item.id)=item.name
+    else
+      div(class="group relative input-group")&attributes(holderAttr)
+        if elType === 'textarea'
+          textarea(class="form-control" class=secondaryStyle && 'form-control--secondary' autocomplete="off")&attributes(props.attr)
+        else
+          input(type=elType class="form-control" class=secondaryStyle && 'form-control--secondary' autocomplete="off")&attributes(props.attr)
+
+        div(data-error-field=props.attr.name || '')=props.error
+
+mixin custom-icon(props = {})
+  - var type = props.type
+  - var attr = props.attr
+
+  if (type === 'logo')
+    svg(width='194' height='61' viewbox='0 0 194 61' fill='none' xmlns='http://www.w3.org/2000/svg')&attributes(attr)
+      path(d='M25.9994 26.0916C20.2477 24.7869 21.9559 17.1505 24.5406 13.8695C27.9379 9.546 33.4209 6.78307 38.7184 5.64465C40.1579 5.33765 41.6166 5.13939 43.0946 5.06904C43.6128 5.04345 44.1374 5.04345 44.6556 5.04985C45.4234 5.05624 45.9224 5.32486 46.012 4.85158C46.0696 4.55738 44.0734 6.36096 43.696 6.73191C42.7043 7.69765 41.7638 8.71457 40.8745 9.77625C37.618 13.6648 35.1548 18.1482 32.9411 22.6891C28.7249 31.336 25.5003 40.6481 19.288 48.163C17.8357 49.9155 16.217 51.508 14.3744 52.8447C12.8645 53.9447 10.011 55.8698 8.02768 55.6012C5.09744 55.1983 6.07632 51.0475 7.15117 49.2951C8.68026 46.8136 11.2458 45.01 13.7794 43.6733C23.5618 38.512 35.4683 37.1817 45.5577 42.1575L48.5584 38.1091C36.1784 32.0012 20.7467 33.6257 9.00655 40.6162C3.86265 43.6797 -3.04708 50.862 1.45704 57.2065C5.12303 62.3614 12.391 60.0334 16.7864 57.3408C28.5265 50.1521 32.9667 35.6211 38.6672 23.9299C40.3371 20.5018 42.1924 17.1568 44.4637 14.0933C45.513 12.6735 46.6454 11.2984 47.893 10.0449C49.2301 8.70817 50.9384 7.53776 51.6293 5.68941C54.3357 -1.54409 40.4394 0.406593 37.1317 1.11651C29.6654 2.72182 21.4889 7.06448 17.7653 14.0102C14.2976 20.4826 16.7928 28.8865 24.4127 30.6133L25.993 26.0916H25.9994Z' fill='currentColor')
+      path(d='M61.9187 20.5892C61.9187 19.3421 61.5604 18.3699 60.8502 17.6728C60.1401 16.9757 59.1996 16.6303 58.0415 16.6303C56.9667 16.6303 56.0262 16.9053 55.2137 17.4553C54.4011 18.0054 53.8061 18.92 53.4287 20.1991L48.3359 18.6321C48.8286 16.7198 49.9098 15.1785 51.5797 14.0209C53.2495 12.8633 55.4888 12.2812 58.3039 12.2812C60.2168 12.2812 61.8867 12.5818 63.3134 13.1766C64.7337 13.7714 65.847 14.6668 66.6467 15.8564C67.4465 17.046 67.8431 18.5426 67.8431 20.3398V29.1722C67.8431 30.2723 68.3677 30.8287 69.4106 30.8287C69.9032 30.8287 70.3703 30.7583 70.8053 30.6112L70.4599 34.3079C69.7049 34.6853 68.7644 34.8707 67.632 34.8707C66.6147 34.8707 65.6998 34.6981 64.8873 34.3463C64.0748 34.0009 63.435 33.4701 62.9743 32.7602C62.5073 32.0503 62.2769 31.1549 62.2769 30.0804V29.9077L63.3198 29.735C63.1471 30.8351 62.6672 31.7752 61.8803 32.5427C61.0997 33.3102 60.1465 33.8986 59.0268 34.3079C57.9072 34.7109 56.7556 34.9155 55.5656 34.9155C54.0876 34.9155 52.8081 34.6917 51.7332 34.2376C50.6584 33.7899 49.833 33.1311 49.2508 32.2549C48.6686 31.3851 48.3807 30.3106 48.3807 29.0315C48.3807 27.407 48.9053 26.0767 49.9482 25.047C50.9911 24.0173 52.4882 23.3138 54.4331 22.9364L62.616 21.28L62.5713 24.9766L57.3442 26.0191C56.3589 26.2238 55.6103 26.4924 55.1049 26.825C54.5995 27.1576 54.3436 27.7012 54.3436 28.4559C54.3436 29.2106 54.6123 29.735 55.1497 30.1124C55.6871 30.4897 56.3333 30.6752 57.0883 30.6752C57.6961 30.6752 58.2911 30.6048 58.8733 30.4577C59.4555 30.3106 59.9737 30.0804 60.4408 29.7606C60.9078 29.4408 61.2661 29.0059 61.5284 28.4559C61.7907 27.9059 61.9187 27.2343 61.9187 26.4541V20.5764V20.5892Z' fill='currentColor')
+      path(d='M82.9698 34.9091C80.7625 34.9091 78.7536 34.519 76.9366 33.7323C75.1196 32.9457 73.6481 31.8456 72.5156 30.4258L75.9577 26.9465C76.6551 27.989 77.5828 28.846 78.7472 29.5176C79.9052 30.1827 81.2871 30.5153 82.8802 30.5153C84.0126 30.5153 84.9211 30.349 85.5993 30.0164C86.2839 29.6839 86.623 29.153 86.623 28.4303C86.623 27.9634 86.463 27.5669 86.1431 27.2343C85.8232 26.9017 85.1835 26.6331 84.2302 26.4285L80.3978 25.6418C77.8707 25.1174 76.0793 24.3307 75.0236 23.269C73.9616 22.2073 73.4369 20.8387 73.4369 19.1566C73.4369 17.967 73.7952 16.8478 74.5054 15.8053C75.2155 14.7628 76.284 13.9121 77.7043 13.2598C79.1247 12.6074 80.8969 12.2812 83.0146 12.2812C85.1323 12.2812 87.0836 12.6202 88.6959 13.3046C90.3082 13.9889 91.575 14.993 92.5027 16.3297L88.9326 19.809C88.2928 18.792 87.4611 18.0182 86.431 17.4809C85.401 16.9437 84.3197 16.6751 83.1873 16.6751C82.3748 16.6751 81.6774 16.7646 81.0952 16.9373C80.513 17.11 80.0779 17.353 79.79 17.6536C79.5021 17.9606 79.355 18.3443 79.355 18.8048C79.355 19.2653 79.5597 19.6682 79.9628 20.0008C80.3658 20.3334 81.108 20.6148 82.1828 20.8514L86.623 21.766C88.7727 22.2009 90.3082 22.9364 91.2359 23.9661C92.1636 24.9958 92.6306 26.2366 92.6306 27.6884C92.6306 29.1402 92.2595 30.3234 91.5174 31.4107C90.7752 32.498 89.6876 33.355 88.2545 33.9817C86.8149 34.6085 85.0555 34.9155 82.9634 34.9155L82.9698 34.9091Z' fill='currentColor')
+      path(d='M96.2188 34.4728V12.7083H101.574L101.791 16.6225C102.514 15.1707 103.512 14.0834 104.773 13.3607C106.033 12.638 107.434 12.2734 108.976 12.2734C110.518 12.2734 111.958 12.638 113.224 13.3607C114.485 14.0834 115.438 15.1579 116.078 16.5841C116.545 15.6248 117.165 14.8317 117.952 14.1921C118.733 13.5526 119.609 13.0729 120.563 12.7531C121.522 12.4333 122.495 12.2734 123.48 12.2734C124.901 12.2734 126.199 12.5612 127.377 13.1432C128.554 13.7253 129.488 14.5951 130.185 15.7527C130.883 16.9103 131.228 18.3941 131.228 20.1913V34.4664H125.265V21.3681C125.265 19.7756 124.92 18.6435 124.222 17.972C123.525 17.3068 122.623 16.9743 121.522 16.9743C120.652 16.9743 119.846 17.1917 119.104 17.6266C118.362 18.0615 117.786 18.7075 117.364 19.5645C116.942 20.4215 116.73 21.4896 116.73 22.7623V34.4728H110.768V21.3745C110.768 19.782 110.409 18.6499 109.699 17.9784C108.989 17.3132 108.08 16.9806 106.98 16.9806C106.225 16.9806 105.477 17.1853 104.741 17.5882C103.999 17.9976 103.391 18.6307 102.911 19.5005C102.431 20.3704 102.194 21.5152 102.194 22.9414V34.4728H96.2315H96.2188Z' fill='currentColor')
+      path(d='M138.978 9.57394C137.73 9.57394 136.803 9.30532 136.188 8.76808C135.581 8.23085 135.273 7.43778 135.273 6.39529C135.273 5.3528 135.581 4.51497 136.188 3.97773C136.796 3.44049 137.724 3.17188 138.978 3.17188C140.232 3.17188 141.153 3.44049 141.767 3.97773C142.375 4.51497 142.682 5.32082 142.682 6.39529C142.682 7.46976 142.375 8.23085 141.767 8.76808C141.16 9.30532 140.225 9.57394 138.978 9.57394ZM141.94 12.7078V34.4723H135.977V12.7078H141.94Z' fill='currentColor')
+      path(d='M146.957 34.4742V12.7098H152.312L152.658 19.2397L151.915 18.5426C152.261 17.1228 152.818 15.946 153.572 15.0186C154.327 14.0912 155.249 13.4005 156.336 12.9528C157.424 12.5051 158.62 12.2812 159.926 12.2812C161.435 12.2812 162.779 12.5691 163.95 13.1511C165.127 13.7331 166.055 14.6093 166.739 15.7861C167.424 16.9629 167.763 18.4339 167.763 20.2055V34.4806H161.8V21.9003C161.8 20.0456 161.435 18.7601 160.713 18.0501C159.99 17.3402 159.043 16.9821 157.885 16.9821C157.072 16.9821 156.279 17.1803 155.511 17.5705C154.743 17.9606 154.116 18.5938 153.636 19.4636C153.157 20.3334 152.92 21.4974 152.92 22.9428V34.4742H146.957Z' fill='currentColor')
+      path(d='M185.106 20.5892C185.106 19.3421 184.748 18.3699 184.038 17.6728C183.328 16.9757 182.387 16.6303 181.229 16.6303C180.154 16.6303 179.214 16.9053 178.401 17.4553C177.589 18.0054 176.994 18.92 176.616 20.1991L171.523 18.6321C172.016 16.7198 173.097 15.1785 174.767 14.0209C176.437 12.8633 178.676 12.2812 181.491 12.2812C183.404 12.2812 185.074 12.5818 186.501 13.1766C187.921 13.7714 189.034 14.6668 189.834 15.8564C190.634 17.046 191.031 18.5426 191.031 20.3398V29.1722C191.031 30.2723 191.555 30.8287 192.598 30.8287C193.091 30.8287 193.558 30.7583 193.993 30.6112L193.647 34.3079C192.892 34.6853 191.952 34.8707 190.819 34.8707C189.802 34.8707 188.887 34.6981 188.075 34.3463C187.262 34.0009 186.622 33.4701 186.162 32.7602C185.695 32.0503 185.464 31.1549 185.464 30.0804V29.9077L186.507 29.735C186.335 30.8351 185.855 31.7752 185.068 32.5427C184.287 33.3102 183.334 33.8986 182.214 34.3079C181.095 34.7109 179.943 34.9155 178.753 34.9155C177.275 34.9155 175.996 34.6917 174.921 34.2376C173.846 33.7899 173.021 33.1311 172.438 32.2549C171.856 31.3851 171.568 30.3106 171.568 29.0315C171.568 27.407 172.093 26.0767 173.136 25.047C174.179 24.0173 175.676 23.3138 177.621 22.9364L185.804 21.28L185.759 24.9766L180.532 26.0191C179.546 26.2238 178.798 26.4924 178.292 26.825C177.787 27.1576 177.531 27.7012 177.531 28.4559C177.531 29.2106 177.8 29.735 178.337 30.1124C178.875 30.4897 179.521 30.6752 180.276 30.6752C180.884 30.6752 181.479 30.6048 182.061 30.4577C182.643 30.3106 183.161 30.0804 183.628 29.7606C184.095 29.4408 184.454 29.0059 184.716 28.4559C184.978 27.9059 185.106 27.2343 185.106 26.4541V20.5764V20.5892Z' fill='currentColor')
+  if (type === 'arrow-svg')
+    svg(width='41' height='13' class="w-40 h-auto inline-block icon-arrow-right-fill" viewbox='0 0 41 13' fill='none' xmlns='http://www.w3.org/2000/svg')
+      path(d='M0.507812 8.8903H35.5041C38.892 8.8903 40.7322 10.8714 38.2821 11.6428C31.305 13.8392 28.7354 2.97896 22.4043 1.94531' stroke='#9A92D9' stroke-width='2')
+
+
+mixin read-more(props = {})
+  - var link = props.link
+  - var external = props.external
+  - var title = props.title
+
+  a(href=link target=external && "_blank" class="inline-flex items-center link link--underline")
+    span(class="")
+      | !{title}
+    span(class="ml-5 w-[0.8em] h-[0.8em] inline-block align-baseline")
+      | !{filters.icon('plus')}
+
+mixin icon(icon, size = 'large')
+  -
+    var sizes = {
+      large: 'custom-icon--large',
+      small: 'custom-icon--small',
+    }
+  div(class="custom-icon" class=sizes[size])
+    img(src=icon class="w-full h-full object-contain" alt="icon")
+
+mixin lamp-icon()
+  div(class="custom-icon custom-icon--large !p-10 laptop:!p-14")
+    +custom-icon({type: 'lamp', attr: {class: 'relative -bottom-10 laptop:-bottom-14'}})
+
+mixin badge(text, attr = {})
+  //- - var text = props.text
+  //- - var attr = props.attr
+  button(type="button" class="inline-flex items-center text-center py-10 px-20 backdrop-blur text-cream border-2 border-cream border-opacity-10 hover:opacity-70 transition-opacity duration-300")&attributes(attr)
+    | !{text}
+
+
+
+mixin default-accordion(props = {})
+  - var attr = props.attr
+  - var items = props.items
+
+  div(class="relative" data-component="accordion")&attributes(attr)
+    each item, index in items
+
+      div(data-accordion-item='' class="relative")
+        div(class="flex items-center justify-between py-10 text-base leading-base" data-accordion-opener='')
+
+        div(data-accordion-content='')
+
+mixin tooltip(props = {})
+  span(class="ml-5 -mt-2 laptop:ml-8 w-12 h-12 laptop:w-20 laptop:h-20 inline-block cursor-pointer" data-cursor=props.text)
+    | !{filters.svg('info', 'w-full h-full object-cover')}
+
+
+mixin preorder-form(props = {}, colorOptions, hideImage = false)
+  - var title = props.title
+  - var description = props.description
+  - var deliveryTooltip = props.deliveryTooltip
+  - var purchaseTooltip = props.purchaseTooltip
+  - var fullPrice = props.fullPrice
+  - var currentPrice = props.currentPrice
+  - var image = props.image.data
+  - var redirectTitle = props.redirectTitle || 'Redirecting to Checkout'
+  - var redirectDescription = props.redirectDescription || 'You’re automatically being redirected to finalize your purchase.'
+  - var manualRedirect = props.manualRedirect
+
+  div(class="bg-cream text-gray-900 rounded p-12 md:p-10 relative grid gap-10" class=!hideImage && 'md:grid-cols-2' class=hideImage ? 'max-w-[45.6rem]' : 'max-w-[93rem]')
+    if !hideImage && image.attributes
+      div(class="rounded aspect-[276/230] md:aspect-none overflow-hidden md:w-auto md:h-full")
+        +picture({
+          ...image.attributes,
+          pictureClass: 'h-full',
+          imageClass: 'object-cover'
+        })
+
+    form(data-component="purchase-form" class="relative" novalidate='' )
+      div(data-layout="redirect" class='absolute left-0 top-0 w-full h-full opacity-0 pointer-events-none py-10 md:p-10 bg-cream z-2')
+        div(class="relative h-full flex flex-col")
+          span(data-cancel-form='' class="absolute right-0 top-0 w-16 h-16 hover:opacity-50 transition-opacity duration-300 cursor-pointer")
+            | !{filters.svg('close', 'w-full h-full')}
+
+          div(class="mb-10 md:mb-30")
+            +lamp-icon()
+
+          h4(class="mb-15" data-dots="....")
+            | !{redirectTitle}
+
+          p(class="mb-25")
+            | !{redirectDescription}
+
+          if manualRedirect
+            div(class="mt-auto")
+              a(href=manualRedirect.link class="link link--underline")
+                | !{manualRedirect.title}
+
+
+
+      div(data-layout="purchase" class="py-10 md:p-10")
+        div(class="mb-10 md:mb-30")
+          +lamp-icon()
+
+        h4(class="mb-15")
+          | !{title}
+
+        p(class="reset-last flex items-center mb-12")
+          | !{description}
+          +tooltip({text: deliveryTooltip})
+
+        div(class="border-t border-b border-gray-900 border-opacity-20 py-12 flex items-center gap-x-20")
+          div
+            | ATMOS price: !{fullPrice}
+          div(class="font-semibold flex items-center")
+            | Due Today: !{currentPrice}
+            +tooltip({text: purchaseTooltip})
+
+        div(class="grid gap-y-10 laptop:block")
+          div(class="pt-20 laptop:pt-0 laptop:mb-20 relative" data-component="color-picker")
+            div(class="laptop:hidden h-40 rounded-full bg-gray-900 bg-opacity-[0.06] py-10 px-20 flex items-center justify-between relative border border-transparent" data-opener='')
+              - var firstColorOption = colorOptions[0]
+              div(data-text='' class="font-medium")
+                div(class="flex items-center absolute left-0 top-0 h-full w-full p-6")
+                  span(class="w-[2.8rem] h-[2.8rem] laptop:w-[3.2rem] laptop:h-[3.2rem] mr-8 rounded-full flex-shrink-0 overflow-hidden")
+                    +picture({
+                      ...firstColorOption.image.data.attributes,
+                      imageClass: 'w-full h-full object-cover'
+                    })
+
+                  span(class="font-medium text-xs laptop:text-sm laptop:max-w-60")
+                    | !{firstColorOption.title}
+
+              span(class="w-8 h-8 flex items-center justify-end")
+                <svg width="6" height="5" viewBox="0 0 6 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3.86603 4.5C3.48112 5.16667 2.51887 5.16667 2.13397 4.5L0.401924 1.5C0.0170235 0.833332 0.498149 -5.6841e-07 1.26795 -5.01112e-07L4.73205 -1.9827e-07C5.50185 -1.30972e-07 5.98298 0.833333 5.59808 1.5L3.86603 4.5Z" fill="currentColor"/>
+                </svg>
+
+            div(class="bg-gray-100 absolute left-0 top-full w-full mt-4 laptop:static laptop:mt-0 laptop:bg-transparent rounded laptop:rounded-none laptop:border-b laptop:border-gray-900 laptop:border-opacity-20 laptop:py-14 laptop:flex laptop:items-center laptop:gap-x-30 z-2" data-colors='')
+              each item, index in colorOptions
+                - var first = index === 0
+                - var slug = filters.slugify(item.title)
+                - var image = item.image.data
+
+                label(class="group flex items-center py-12 px-6 laptop:p-0 cursor-pointer" class=!first && 'border-t border-gray-900 border-opacity-20 laptop:border-0' for=slug data-color=slug)
+                  input(type="radio" required='' class="sr-only" name="color_option" value=slug id=slug checked=first data-image-url=filters.getUploadsPath(image.attributes.url) data-color-name=item.title)
+                  if image
+                    span(class="w-[2.8rem] h-[2.8rem] laptop:w-[3.2rem] laptop:h-[3.2rem] mr-8 rounded-full flex-shrink-0 overflow-hidden")
+                      +picture({
+                        ...image.attributes,
+                        imageClass: 'w-full h-full object-cover'
+                      })
+
+                    span(class="font-medium text-xs laptop:text-sm laptop:max-w-60")
+                      | !{item.title}
+
+            div(data-error-field='')
+
+          div(class="laptop:mb-10")
+            +form-control({
+              type: 'email',
+              attr: {
+                required: true,
+                name: 'email',
+                placeholder: 'Email',
+              }
+            })
+          div(class="laptop:mb-10")
+            +button({
+              type: 'submit',
+              text: 'Pre-Order Now',
+              attr: {
+                class: 'w-full'
+              }
+            })
+
+          div(class="pt-3 opacity-40")
+            | By clicking "Pre-Order Now" you agree to the &nbsp;
+            a(class="link link--underline" target="_blank" href=cms.globalInfo.termsLink) terms
+            | &nbsp;and&nbsp;
+            a(class="link link--underline" target="_blank" href=cms.globalInfo.privacyLink) privacy policy
+
+
+
+
+mixin slicer(props = {})
+  each block in props
+    - var type = block.__component
+    case type
+
+      default
+        div
+
+mixin dot-text(text)
+  span(class="inline-flex items-center")
+    span(class="w-6 h-6 rounded-full bg-current mr-5")
+    span
+      | !{text}
+
+mixin text-with-small-icon(props = {}, delay)
+  - var title = props.title
+  - var icon = props.icon.data
+
+  div(class="flex items-center gap-x-8 opacity-0" data-animation="moveUp" data-delay=delay)
+    +icon(filters.getUploadsPath(icon.attributes.url), 'small')
+    span
+      | !{title}
+
+
+mixin section-header(title, sectionIndex)
+  div(class="relative pb-20 pt-40 md:pt-60 md:pb-35 container md:grid md:grid-cols-12  md:gap-x-18")
+    if sectionIndex > 1
+      span(class="absolute w-full h-1 bg-current opacity-20 top-0 left-0")
+    div(class="hidden md:block md:col-span-3 lg:col-span-4 h3 m-0" data-animation="split")
+      | !{sectionIndex}.
+    h3(class="md:col-span-8 m-0" data-animation="split" data-delay="0.1")
+      | !{title}
+    span(class="absolute w-full h-1 bg-current opacity-20 bottom-0 left-0")
+
+
+mixin faqs-text-block(item = {}, index, sectionIndex)
+  - var question = item.question
+  - var answer = item.answer
+  div(class="container relative pt-40 pb-60 md:pt-12 md:pb-40 md:grid md:grid-cols-12 md:gap-x-18" data-animation="moveUp")
+    h4(class="hidden md:flex md:col-span-3 lg:col-span-4")
+      | !{sectionIndex}.!{index+1}
+    h4(class="lg:pr-60 md:col-span-4 lg:col-span-5")
+      | !{question}
+    div(class="pr-30 md:pr-10 md:col-span-5 lg:col-span-3")
+      +wys({
+        bodyCopy: answer
+      })
+    span(class="absolute w-full h-1 bg-current opacity-20 bottom-0 left-0")
+
+
+mixin marquee-headers(text, attr={})
+  div(class="overflow-hidden whitespace-nowrap w-full uppercase font-medium text-[5rem] leading-none md:text-[14rem] laptop:text-[24rem] gap-x-[0.5em] flex laptop:leading-[0.8]" data-animation="marquee")&attributes(attr)
+    - var i = 0
+    while i < 3
+      div(class="flex" data-marquee=i++)
+        | !{text}
+
+
+mixin blur-description-block(props = {}, attr = {})
+  - var title = props.title
+  - var description = props.description
+  - var icon = props.icon
+  - var readMore = props.readMore
+
+  div(class="relative w-full md:max-w-[33.5rem] bottom-0 right-0 bg-bronze bg-opacity-10 backdrop-blur-lg rounded overflow-hidden p-20")&attributes(attr)
+    if icon
+      div(class="mb-20 md:mb-35")
+        +icon(filters.getUploadsPath(icon.attributes.url))
+
+    if title
+      h3(class="h4 mb-10")
+        | !{title}
+    if description
+      div(class="pr-25 md:pr-0 reset-last laptop:pb-6")
+        | !{description}
+
+    if readMore
+      div(class="mt-35")
+        +readMore(readMore)
+
+
+mixin story-circle(story = 'intro', props = {})
+  - var color = props.color || '#B07AF2'
+  - var rotationDuration = props.rotationDuration || '5s'
+
+  div(class="w-100 h-100 rounded-full absolute left-0 top-0 -z-1 scale-0" style=`--c: ${color};--s: ${rotationDuration}` data-story-circle=story)&attributes(attr)
+    span(class="circle")
+    span(class='light')
+      span
+
+
+mixin lightning(props = {})
+  - var from = props.from || '130%'
+  - var to = props.to || '40%'
+  - var height = props.height || '100svh'
+  - var attr = props.attr
+
+  div(class="lightning" style=`--power: ${from}; --height: ${height}` data-animation="lightning" data-from=from data-to=to)&attributes(attr)
+    div(class="center-light grid grid-cols-2")
+      span(class="center-light__shadow")
+      div(class="h-full lightning__left")
+      div(class="h-full lightning__right")
+
+
+mixin title-with-double-content-block(props = {})
+  - var title = props.title
+  - var subtitle = props.subtitle
+  - var label = props.label
+  - var description = props.description
+  - var buttons = props.buttons
+
+  div()
+    if title
+      h2(class="uppercase h1 mb-120 text-center"  data-animation="split" data-split="lines" data-duration="2.5" data-stagger-interval=0.25)
+        | !{title}
+
+    if subtitle
+      div(class="grid grid-cols-2 gap-x-180")
+        div(class="")
+          p(class="h2 mb-40" data-animation="split" data-duration="2")
+            | !{subtitle}
+    div(class="grid grid-cols-2 gap-x-180")
+      div
+        if label
+          div(class="flex justify-between items-center gap-x-10" data-animation="moveUp" data-delay=0.1)
+            span(data-animation="split" data-split="words" data-animation-type="fade" data-delay=0.2)
+              | !{label}
+            span(data-animation="moveRight" data-delay=0.25 data-from=-20)
+              +custom-icon({type: 'arrow-svg'})
+      div(data-animation="moveUp" class="laptop:pr-50" data-delay="0.3")
+        if description
+          +wys({
+            bodyCopy: description
+          })
+
+        if buttons
+          div(class="mt-40 flex gap-x-12 flex-wrap")
+            each button, index in buttons
+              +button({
+                theme: index % 2 ? 'secondary' : 'primary',
+                text: button.text,
+                external: true,
+                attr: {
+                  href: button.url,
+                }
+              })
+
+
+//- Sections
+
+mixin home-intro-section(props = {})
+  section(class=" relative" data-animation="intro-section")
+    div(class="flex items-center py-100 relative h-screen max-h-[76rem] container-lg  laptop:pt-100 laptop:pb-10 intro-section-block")
+      div(class="w-full")
+        h1(class="uppercase flex justify-between gap-x-[20%] mb-[2.7rem]")
+          div(data-title-part="left" class="opacity-0") Jasmina
+          div(data-title-part="right" class="opacity-0") Denner
+
+        div(class="max-w-[35rem] reset-last")
+          p(data-description='' class="opacity-0") Join her at the edge where health meets technology, and human potential is redefined.
+
+        div(class="flex justify-center absolute left-0 top-0 w-full h-full pt-120 px-40 ")
+          div(class="relative aspect-[520/648] laptop:-left-10")
+            div(class="relative opacity-0" data-main-image='')
+              +story-circle('intro')
+              +picture({
+                url: '/assets/images/image01.png',
+                local: true,
+                width: 520,
+                height: 648,
+                pictureClass: 'h-full w-auto z-2',
+                imageClass: 'h-full w-full object-contain'
+              }, false)
+              +picture({
+                url: '/assets/images/image01-2.png',
+                local: true,
+                width: 520,
+                height: 648,
+                pictureClass: 'h-full w-auto !absolute left-0 top-0 z-4',
+                imageClass: 'h-full w-full object-contain'
+              }, false)
+
+            svg(width='295' height='149' class="absolute w-[57.3%] left-[29.4%] z-2 bottom-[20%] h-auto opacity-0" viewbox='0 0 295 149' fill='none' xmlns='http://www.w3.org/2000/svg')
+              path(d='M1 99.4988C1 99.4988 30.3761 125.305 54.5 129.5C89 135.5 126.5 120 126.5 120C126.5 120 165.5 104.498 183 86.4988C200.5 68.5 212.5 47.5 224 27C235.5 6.5 244.5 1 250.5 1C256.5 0.999999 272 8 282 39C292 70 300 109.5 289 148.5' stroke='black' data-path-first='')
+
+
+
+    div(data-part="sequence" class="h-[292rem] relative pb-[30rem] flex flex-col")
+      +story-circle('global')
+      div(class="connection-path absolute -left-[19.4%] -top-[12.9rem] w-[116.8rem] h-auto opacity-0 -z-2")
+        svg(width='1168' height='3049' viewbox='0 0 1168 3049' fill='none' xmlns='http://www.w3.org/2000/svg' class="w-full h-auto")
+          path(d='M1162.2 4.64844C1145.26 295.553 870.258 356.553 704.258 487.553C527.261 613.553 684.318 704.322 684.318 897.553V2635.64C684.318 2748.39 661.075 2857.78 559.103 2885.18C388.521 2931.03 285.053 2860.49 5.42969 3043.72' stroke='url(#paint0_linear_901_126)' stroke-width='2' data-path-continue='' stroke-miterlimit='10')
+          //- g(filter='url(#filter0_f_901_126)')
+          defs
+            filter#filter0_f_901_126(x='0.882812' y='0.59375' width='1166.31' height='3047.96' filterunits='userSpaceOnUse' color-interpolation-filters='sRGB')
+              feflood(flood-opacity='0' result='BackgroundImageFix')
+                feblend(mode='normal' in='SourceGraphic' in2='BackgroundImageFix' result='shape')
+                  fegaussianblur(stddeviation='2' result='effect1_foregroundBlur_901_126')
+            lineargradient#paint0_linear_901_126(x1='1134.26' y1='129.553' x2='304.187' y2='3262.8' gradientunits='userSpaceOnUse')
+              stop(stop-color='#E6E6E1' stop-opacity='0')
+              stop(offset='0.0874908' stop-color='#FFFFE6' stop-opacity='0.901961')
+              stop(offset='0.160749' stop-color='#E6E6E1' stop-opacity='0.1')
+              stop(offset='0.241254' stop-color='#E6E6E1' stop-opacity='0.8')
+              stop(offset='0.605694' stop-color='#E6E6E1' stop-opacity='0.8')
+              stop(offset='0.755705' stop-color='#E6E6E1')
+              stop(offset='0.835439' stop-color='#E6E6E1' stop-opacity='0.2')
+              stop(offset='0.91684' stop-color='#E6E6E1' stop-opacity='0.4')
+              stop(offset='1' stop-color='#E6E6E1')
+
+
+      div(class="py-250 text-center container-lg relative")
+        p(class="mb-0 h2 leading-small" data-animation="split" data-split="lines" data-duration="1.6" data-stagger-interval=0.15) Jasmina isn’t just observing the future — she’s shaping it. With a life that’s anything but conventional, she’s merging science, technology, and ambition to unlock what’s possible.
+
+      div(data-sticky-content='' class="flex-grow")
+        div(class="sticky top-250 flex items-center" )
+          -
+            var steps = [
+              {
+                title: 'engineer',
+                text: '<p>An <strong>engineer</strong> with <br> an interdisciplinary <br> and impactful insight.</p>'
+              },
+              {
+                title: 'investor',
+                text: '<p>An <strong>investor</strong> with an eye for <br> purpose driven innovations, <br> brings scientific research <br> to reality.</p>'
+              },
+              {
+                title: 'scientist',
+                text: '<p>An <strong>advocate for science</strong> <br> and <strong>education</strong>  who knows <br> the power of knowledge <br> and community.</p>'
+              },
+              {
+                title: 'author',
+                text: '<p>An <strong>upcoming author</strong> <br> ready to share her vision.</p>'
+              },
+              {
+                title: 'athlete',
+                text: '<p>A world-class <strong>fencer</strong> <br> combining the art of grace, <br> agility and determination.</p>'
+              },
+              {
+                title: 'entrepreneur',
+                text: '<p>An <strong>entrepreneur</strong> driven <br> by the future for human <br> betterment.</p>'
+              },
+            ]
+          div(class="px-100 py-30 grid items-center grid-cols-12")
+            div(class="col-span-5")
+              div(class="grid text-base md:text-md max-w-200")
+                each item, index in steps
+                  div(data-content-title='' class=index > 0 && "opacity-50")
+                    | !{item.title}
+
+            div(class="col-span-7")
+              div(class="grid items-center")
+                each item, index in steps
+                  div(class="col-start-1 col-end-1 row-start-1 row-end-1")
+                    +wys({
+                      bodyCopy: item.text,
+                      attr: {
+                        class: 'h2 mb-0 w-full',
+                        'data-content-description': '',
+                      }
+                    })
+
+mixin home-visionary-intro-section(props = {})
+  section(class="relative container-lg pt-100 pb-300")
+    +title-with-double-content-block({
+      title: 'A Visionary at <br> the Intersection',
+      subtitle: 'Jasmina Denner isn’t just a name; she’s <br> a movement.',
+      label: 'But what truly sets her apart?',
+      description: `<p>She’s thriving where others are just getting started. A leader who turns vision into reality. A connector who bridges technology and humanity. A strategist who sees the whole picture and acts. Her work isn’t just about living longer — it’s about living better. Maximizing life’s potential. Bringing you to the frontier of what’s possible.</p>`
+    })
+
+
+mixin home-visionary-section(props = {})
+  section(class="relative mb-[65rem]" data-animation="visionary")
+    -
+      var slides = [
+        {
+          text: '<p>She’s been at the cutting <br> edge of life <strong>sciences</strong> <br> <strong>and sustainability.</strong></p>',
+          image: {
+            url: '/assets/images/image02.jpg',
+            local: true
+          },
+        },
+        {
+          text: '<p>She’s <strong>invested</strong><br> <strong>and fundraised</strong> in ideas <br> that challenge the status quo.</p>',
+          image: {
+            url: '/assets/images/image03.jpg',
+            local: true
+          },
+        },
+        {
+          text: '<p>She’s pushed her <strong>body</strong> <br> <strong>and mind</strong> to the limits in elite sports.</p>',
+          image: {
+            url: '/assets/images/image04.jpg',
+            local: true
+          },
+        },
+        {
+          text: '<p>She’s <strong>advocated</strong> <br> <strong>for public health</strong> with an unwavering commitment.</p>',
+          image: {
+            url: '/assets/images/image05.jpg',
+            local: true
+          },
+        },
+        {
+          text: '<p>She’s embraced <br> transformation with life-long <strong>learning</strong>, <strong>discipline and dedication.</strong></p>',
+          image: {
+            url: '/assets/images/image06.jpg',
+            local: true
+          },
+        },
+      ]
+
+    div(class="container-lg" data-animation="chained-content" style=`--h: ${slides.length}`)
+
+      div(class="w-full items-center grid grid-cols-12 gap-x-70 h-screen sticky top-0 py-100")
+        div(class="col-span-4 grid pt-100 pr-10 -ml-40")
+          each item, index in slides
+            div(class="col-start-1 col-end-1 row-start-1 row-end-1")
+              div(class="w-full h-full aspect-square rounded-full overflow-hidden relative" data-image='' style="--opacity: 0")
+                +picture({
+                  ...item.image,
+                  pictureClass: 'h-full',
+                  imageClass: 'h-full object-cover',
+                })
+        div(class="col-span-8 grid items-start pt-55 pb-30")
+          div(class="mb-120")
+            h2(class="mb-0 flex h-[1.2em] overflow-hidden" data-counter='')
+              div 0
+              div(class="grid")
+                each item, index in slides
+                  div(data-count='')
+                    | !{index + 1}
+
+          each item, index in slides
+            div(class="col-start-1 col-end-1 row-start-2 row-end-2")
+              +wys({
+                bodyCopy: item.text,
+                attr: {
+                  class: 'h2 mb-0 w-full',
+                  'data-content-description': '',
+                }
+              })
+
+    div(class="h-[500svh] relative" data-horizontal-part='')
+      div(class="sticky top-0 w-[398.7rem] h-screen")
+
+        div(class="absolute w-[398.7rem] -left-[11.3rem] -top-[10rem]" data-svg='')
+          div(data-phrase='' class="absolute h1 mb-0 uppercase right-full")
+            span a
+            span n
+            span &nbsp;
+            span o
+            span p
+            span e
+            span n
+            span &nbsp;
+            span l
+            span e
+            span t
+            span t
+            span e
+            span r
+            span &nbsp;
+            span t
+            span o
+            span &nbsp;
+            span t
+            span h
+            span e
+            span &nbsp;
+            span f
+            span u
+            span t
+            span u
+            span r
+            span e
+          div(class="absolute left-[30%] bottom-[20%]")
+            p(class="mb-0 max-w-350 text-center" data-short-description='') This is Jasmina’s invitation to you — to not just imagine, but to actively shape the future we want to live in. Here’s how you’ll do it together:
+
+          svg(width='3987' height='2025' viewbox='0 0 3987 2025' fill='none' xmlns='http://www.w3.org/2000/svg' class="w-full h-auto group-svg")
+            path(d='M1149.78 1820.46C1362.26 1854.2 1575.04 1806.41 1670.08 1776.96C1774.95 1744.45 2072.19 1614.04 2347.16 1521.45C2496.45 1471.18 2639.05 1429.05 2740.99 1425.85C3240.16 1410.12 3144.06 1451.41 3311.75 1582.23C3328.34 1595.18 3346.3 1605.76 3365.38 1614.44C3539.07 1693.43 3805.52 1614.31 3981.55 1720.91' stroke='url(#paint8_linear_901_186)' stroke-width='2' stroke-miterlimit='10')
+            path(d='M1149.78 1820.46C1362.26 1854.2 1576.31 1830.73 1671.35 1801.26C1775.36 1769.02 2068.14 1646.84 2342.39 1581.42C2494.39 1545.17 2626.85 1513.46 2742.81 1510.7C3244.92 1497.21 3148.25 1510.42 3315.96 1641.22C3331.31 1653.2 3347.8 1662.66 3365.23 1670.05C3538.16 1743.41 3804.07 1613.42 3981.55 1720.89' stroke='url(#paint9_linear_901_186)' stroke-width='2' stroke-miterlimit='10')
+            path(d='M1149.78 1820.46C1362.26 1854.2 1577.56 1855.03 1672.6 1825.57C1775.77 1793.6 2064.48 1680.17 2337.6 1641.39C2492.55 1619.39 2614.65 1598.16 2744.62 1595.56C3249.7 1585.49 3152.45 1569.43 3320.14 1700.24C3334.33 1711.32 3349.46 1719.81 3365.38 1726.17C3537.59 1794.87 3802.7 1612.6 3981.54 1720.89' data-center-test='' stroke='url(#paint10_linear_901_186)' stroke-width='2' stroke-miterlimit='10')
+            path(d='M1149.78 1820.46C1362.26 1854.2 1578.82 1879.34 1673.86 1849.87C1776.18 1818.16 2061.09 1714.11 2332.83 1701.36C2490.85 1693.95 2602.45 1682.62 2746.44 1680.43C3254.45 1672.7 3156.64 1628.45 3324.35 1759.25C3337.28 1769.34 3350.97 1776.94 3365.3 1782.43C3536.83 1848.12 3801.23 1611.71 3981.54 1720.89' stroke='url(#paint11_linear_901_186)' stroke-width='2' stroke-miterlimit='10')
+            path(d='M1149.78 1820.45C1362.26 1854.2 1580.08 1903.64 1675.13 1874.18C1776.59 1842.73 2057.77 1748.69 2328.07 1761.34C2489.21 1768.87 2590.27 1767.02 2748.27 1765.29C3259.22 1759.69 3160.85 1687.45 3328.56 1818.27C3340.18 1827.34 3352.39 1834.11 3365.12 1838.91C3536 1903.28 3799.72 1610.8 3981.55 1720.9' stroke='url(#paint12_linear_901_186)' stroke-width='2' stroke-miterlimit='10')
+            path(d='M1149.78 1820.46C1362.26 1854.2 1581.35 1927.95 1676.39 1898.48C1777 1867.3 2054.35 1783.87 2323.3 1821.29C2487.52 1844.14 2578.07 1851.07 2750.09 1850.15C3263.97 1845.65 3165.06 1746.46 3332.75 1877.26C3343.12 1885.35 3353.94 1891.39 3365.17 1895.63C3535.43 1959.92 3798.25 1609.9 3981.54 1720.88' stroke='url(#paint13_linear_901_186)' stroke-width='2' stroke-miterlimit='10')
+            path(d='M1149.78 1820.46C1362.26 1854.2 1582.6 1952.25 1677.64 1922.79C1777.41 1891.88 2050.69 1819.56 2318.51 1881.27C2485.64 1919.79 2565.86 1935.47 2751.9 1935.01C3268.72 1932.77 3169.25 1805.48 3336.95 1936.28C3346.04 1943.38 3355.47 1948.72 3365.21 1952.5C3534.93 2018.42 3796.76 1609 3981.54 1720.89' stroke='url(#paint14_linear_901_186)' stroke-width='2' stroke-miterlimit='10')
+            path(d='M1149.78 1820.46C1362.26 1854.2 1583.86 1976.56 1678.91 1947.09C1777.81 1916.44 2046.71 1855.64 2313.74 1941.24C2483.59 1995.69 2553.68 2019.88 2753.73 2019.88C3273.5 2019.88 3173.47 1864.48 3341.16 1995.29C3348.95 2001.37 3356.98 2006.03 3365.23 2009.41C3534.44 2078.82 3795.24 1608.08 3981.54 1720.89' stroke='url(#paint15_linear_901_186)' stroke-width='2' stroke-miterlimit='10')
+            path(d='M5.91797 4.57031C16.3719 41.8431 71.3448 118.719 207.605 128.039C377.931 139.69 593.98 176.343 624.46 391.597C645.079 621.99 573.669 746.664 593.299 921.157C605.646 1030.9 629.839 1076.5 620.874 1239.66C618.184 1288.62 608.378 1372.41 634.328 1454.03C667.445 1561.21 805.56 1774.58 1149.78 1820.44' stroke='url(#paint17_linear_901_186)' stroke-width='2' stroke-miterlimit='10' data-path-to-draw='')
+            path(d='M6 4C16.45 41.27 71.43 118.15 207.69 127.47C378.02 139.12 594.06 175.77 624.55 391.03C645.17 621.42 573.76 746.1 593.39 920.59C605.74 1030.33 629.93 1075.93 620.97 1239.09C618.28 1288.05 608.47 1371.84 634.42 1453.46C667.54 1560.64 805.65 1774.01 1149.87 1819.87V1819.89C1362.35 1853.63 1575.13 1805.84 1670.17 1776.39C1775.04 1743.88 2072.28 1613.47 2347.25 1520.88C2496.54 1470.61 2639.14 1428.48 2741.08 1425.28C3240.25 1409.55 3144.15 1450.84 3311.84 1581.66C3328.43 1594.61 3346.39 1605.19 3365.47 1613.87C3539.16 1692.86 3805.61 1613.74 3981.64 1720.34' stroke='url(#paint18_linear_901_186)' stroke-width='2' stroke-miterlimit='10'  data-path-for-chars='' class="invisible")
+            //- path(d='M6 4C16.45 41.27 71.43 118.15 207.69 127.47C378.02 139.12 594.06 175.77 624.55 391.03C645.17 621.42 573.76 746.1 593.39 920.59C605.74 1030.33 629.93 1075.93 620.97 1239.09C618.28 1288.05 608.47 1371.84 634.42 1453.46C667.54 1560.64 805.65 1774.01 1149.87 1819.87V1819.89C1362.35 1853.63 1575.13 1805.84 1670.17 1776.39C1775.04 1743.88 2072.28 1613.47 2347.25 1520.88C2496.54 1470.61 2639.14 1428.48 2741.08 1425.28' stroke='#FF0101' stroke-miterlimit='10' data-path-for-chars='' class="invisible")
+            defs
+              lineargradient#paint8_linear_901_186(x1='743.34' y1='1627.36' x2='3981.56' y2='1627.36' gradientunits='userSpaceOnUse')
+                stop(offset='0.0499414' stop-color='#E6E6E1')
+                stop(offset='0.149941' stop-color='#E6E6E1' stop-opacity='0.3')
+                stop(offset='0.414941' stop-color='#E6E6E1')
+                stop(offset='0.75' stop-color='#E6E6E1')
+                stop(offset='0.78' stop-color='#E6E6E1' stop-opacity='0.3')
+                stop(offset='0.825039' stop-color='#E6E6E1')
+                stop(offset='1' stop-color='#E6E6E1' stop-opacity='0')
+              lineargradient#paint9_linear_901_186(x1='743.34' y1='1671.79' x2='3981.56' y2='1671.79' gradientunits='userSpaceOnUse')
+                stop(offset='0.0499414' stop-color='#E6E6E1')
+                stop(offset='0.149941' stop-color='#E6E6E1' stop-opacity='0.3')
+                stop(offset='0.414941' stop-color='#E6E6E1')
+                stop(offset='0.75' stop-color='#E6E6E1')
+                stop(offset='0.78' stop-color='#E6E6E1' stop-opacity='0.3')
+                stop(offset='0.825039' stop-color='#E6E6E1')
+                stop(offset='1' stop-color='#E6E6E1' stop-opacity='0')
+              lineargradient#paint10_linear_901_186(x1='743.34' y1='1717.89' x2='3981.54' y2='1717.89' gradientunits='userSpaceOnUse')
+                stop(offset='0.0499414' stop-color='#E6E6E1')
+                stop(offset='0.149941' stop-color='#E6E6E1' stop-opacity='0.3')
+                stop(offset='0.414941' stop-color='#E6E6E1')
+                stop(offset='0.75' stop-color='#E6E6E1')
+                stop(offset='0.78' stop-color='#E6E6E1' stop-opacity='0.3')
+                stop(offset='0.825039' stop-color='#E6E6E1')
+                stop(offset='1' stop-color='#E6E6E1' stop-opacity='0')
+              lineargradient#paint11_linear_901_186(x1='743.34' y1='1728.46' x2='3981.54' y2='1728.46' gradientunits='userSpaceOnUse')
+                stop(offset='0.0499414' stop-color='#E6E6E1')
+                stop(offset='0.149941' stop-color='#E6E6E1' stop-opacity='0.3')
+                stop(offset='0.414941' stop-color='#E6E6E1')
+                stop(offset='0.75' stop-color='#E6E6E1')
+                stop(offset='0.78' stop-color='#E6E6E1' stop-opacity='0.3')
+                stop(offset='0.825039' stop-color='#E6E6E1')
+                stop(offset='1' stop-color='#E6E6E1' stop-opacity='0')
+              lineargradient#paint12_linear_901_186(x1='743.34' y1='1738.6' x2='3981.56' y2='1738.6' gradientunits='userSpaceOnUse')
+                stop(offset='0.0499414' stop-color='#E6E6E1')
+                stop(offset='0.149941' stop-color='#E6E6E1' stop-opacity='0.3')
+                stop(offset='0.414941' stop-color='#E6E6E1')
+                stop(offset='0.75' stop-color='#E6E6E1')
+                stop(offset='0.78' stop-color='#E6E6E1' stop-opacity='0.3')
+                stop(offset='0.825039' stop-color='#E6E6E1')
+                stop(offset='1' stop-color='#E6E6E1' stop-opacity='0')
+              lineargradient#paint13_linear_901_186(x1='743.34' y1='1749.65' x2='3981.54' y2='1749.65' gradientunits='userSpaceOnUse')
+                stop(offset='0.0499414' stop-color='#E6E6E1')
+                stop(offset='0.149941' stop-color='#E6E6E1' stop-opacity='0.3')
+                stop(offset='0.414941' stop-color='#E6E6E1')
+                stop(offset='0.75' stop-color='#E6E6E1')
+                stop(offset='0.78' stop-color='#E6E6E1' stop-opacity='0.3')
+                stop(offset='0.825039' stop-color='#E6E6E1')
+                stop(offset='1' stop-color='#E6E6E1' stop-opacity='0')
+              lineargradient#paint14_linear_901_186(x1='743.34' y1='1776.87' x2='3981.54' y2='1776.87' gradientunits='userSpaceOnUse')
+                stop(offset='0.0499414' stop-color='#E6E6E1')
+                stop(offset='0.149941' stop-color='#E6E6E1' stop-opacity='0.3')
+                stop(offset='0.414941' stop-color='#E6E6E1')
+                stop(offset='0.75' stop-color='#E6E6E1')
+                stop(offset='0.78' stop-color='#E6E6E1' stop-opacity='0.3')
+                stop(offset='0.825039' stop-color='#E6E6E1')
+                stop(offset='1' stop-color='#E6E6E1' stop-opacity='0')
+              lineargradient#paint15_linear_901_186(x1='743.34' y1='1806.95' x2='3981.54' y2='1806.95' gradientunits='userSpaceOnUse')
+                stop(offset='0.0499414' stop-color='#E6E6E1')
+                stop(offset='0.149941' stop-color='#E6E6E1' stop-opacity='0.3')
+                stop(offset='0.414941' stop-color='#E6E6E1')
+                stop(offset='0.75' stop-color='#E6E6E1')
+                stop(offset='0.78' stop-color='#E6E6E1' stop-opacity='0.3')
+                stop(offset='0.825039' stop-color='#E6E6E1')
+                stop(offset='1' stop-color='#E6E6E1' stop-opacity='0')
+              lineargradient#paint16_linear_901_186(x1='5.91797' y1='4.57031' x2='1439.36' y2='2530.28' gradientunits='userSpaceOnUse')
+                stop(offset='0.00342511' stop-color='#E6E6E1' stop-opacity='0')
+                stop(offset='0.0874908' stop-color='#FFFFE6' stop-opacity='0.901961')
+                stop(offset='0.160749' stop-color='#E6E6E1' stop-opacity='0.1')
+                stop(offset='0.241254' stop-color='#E6E6E1' stop-opacity='0.8')
+                stop(offset='0.605694' stop-color='#E6E6E1' stop-opacity='0.8')
+                stop(offset='0.755705' stop-color='#E6E6E1')
+                stop(offset='0.835439' stop-color='#E6E6E1' stop-opacity='0.2')
+                stop(offset='0.91684' stop-color='#E6E6E1' stop-opacity='0.4')
+                stop(offset='1' stop-color='#E6E6E1')
+              lineargradient#paint17_linear_901_186(x1='5.91797' y1='4.57031' x2='1314.23' y2='1591.16' gradientunits='userSpaceOnUse')
+                stop(offset='0.00342511' stop-color='#E6E6E1' stop-opacity='0')
+                stop(offset='0.0874908' stop-color='#FFFFE6' stop-opacity='0.901961')
+                stop(offset='0.160749' stop-color='#E6E6E1' stop-opacity='0.1')
+                stop(offset='0.241254' stop-color='#E6E6E1' stop-opacity='0.8')
+                stop(offset='0.605694' stop-color='#E6E6E1' stop-opacity='0.8')
+                stop(offset='0.755705' stop-color='#E6E6E1')
+                stop(offset='0.835439' stop-color='#E6E6E1' stop-opacity='0.2')
+                stop(offset='0.91684' stop-color='#E6E6E1' stop-opacity='0.4')
+                stop(offset='1' stop-color='#E6E6E1')
+
+
+          div(class="absolute grid left-[69%] bottom-[0.8rem] h-[59.6rem]" data-component='hover-visionary')
+            div(class="absolute" data-hover-block='')
+              span(class="rounded-full w-[27rem] h-[27rem] -mt-[13.5rem] flex items-center justify-center text-center overflow-hidden  bg-blue z-2 pointer-events-none p-40" data-hover-block-content='')
+                div
+            -
+              var blocks = [
+                {
+                  text: 'Rise to the challenge',
+                  content: `Embrace the unknown. Push boundaries. Reimagine what's possible.`,
+                },
+                {
+                  text: 'Systems Thinking',
+                  content: `See the whole picture. Create integrated solutions.`,
+                  position: 'left-[-0.6rem]',
+                },
+                {
+                  text: 'Pioneer Innovation',
+                  content: `Challenge norms. Innovate with empathy.`,
+                  position: 'left-[-3.1rem]',
+                },
+                {
+                  text: 'Scientific Rigor',
+                  content: `Be true. Transparent. Ethical.`,
+                  position: 'left-[2.2rem]',
+                },
+                {
+                  text: 'Continuous Learning',
+                  content: `Never stop growing. Expand. Excell.`,
+                  position: 'left-[-5.7rem]',
+                },
+                {
+                  text: 'Wisdom in Action',
+                  content: `Purposeful. Collective. Inclusive.`,
+                  position: 'left-[-4.4rem]',
+                },
+                {
+                  text: 'Compassionate Excellence',
+                  content: `Inspire. Elevete. Transform.`,
+                  position: 'left-[-10.9rem]',
+                },
+              ]
+
+            each item, index in blocks
+              div(class="text-lg font-secondary group relative flex items-center cursor-pointer"  class=item.position data-hover-move-item='')
+                span(class="group-hover:text-blue-100 font-bold capitalize transition-colors duration-300" data-hover-item=item.content)
+                  | !{item.text}
+
+          div(data-book='' class="absolute w-[90vw] h-auto aspect-[1298/1090] left-full -bottom-[39%]")
+             +picture({
+              url: '/assets/images/book.png',
+              local: true,
+              width: 1298,
+              height: 1090,
+            }, false)
+
+mixin home-longevity-intro-section(props = {})
+  section(class="relative container-lg pt-100 pb-300")
+    +title-with-double-content-block({
+      title: 'Longevity Intelligence',
+      subtitle: 'Not just more years, but better years. ',
+      label: 'Dive into longevity?',
+      description: `<p>Jasmina’s approach to longevity is about engineering life for peak performance and fulfillment. Genes are the hardware and lifestyle are the software of our existence.</p>`,
+      buttons: [
+        {
+          text: 'Learn more',
+          url: '?learn-more',
+        },
+        {
+          text: 'Order book',
+          url: '?order-book',
+        },
+      ]
+    })
+
+mixin home-floating-cards-section(props = {})
+  section(class="container-lg py-100 relative")
+
+    +lightning({height: '70svh', attr: {class: 'opacity-20'}})
+    div(class="text-center max-w-[93rem] mx-auto h3 mb-[29rem] italic" data-animation="split") This is Jasmina’s invitation to you — to not just imagine, but to actively shape the future we want to live in.
+
+    h2(class="h1 mb-100 text-center uppercase" data-animation="split") Explore <br> the Future <br> with Jasmina
+
+    div(class=" w-full")
+      -
+        var steps = [
+          {
+            image: '/assets/images/image07.jpg',
+            title: 'Ventress Ventures',
+            text: 'Pioneering innovations that shape the future of health and human potential. Jasmina’s investments aren’t just about returns — they’re about impact. Discover the ventures that are pushing boundaries and redefining industries.',
+            button: {
+              text: 'Learn more',
+              url: '?learn-more',
+            }
+          },
+          {
+            image: '/assets/images/image08.jpg',
+            title: 'Engage & Amplify: Speaking & Media',
+            text: 'Dynamic. Thought-provoking. Unapologetically bold. Jasmina’s voice cuts through the noise, making complex ideas accessible and inspiring action. Book her for your next event, podcast, or feature, and bring a fresh perspective to the conversation.',
+            button: {
+              text: 'Learn more',
+              url: '?learn-more',
+            }
+          },
+          {
+            image: '/assets/images/image09.jpg',
+            title: 'Blog and Insights',
+            text: 'Where science meets style. Explore Jasmina’s latest thoughts on health, technology, and human potential. Stay ahead of the curve with insights that challenge, inform, and inspire.',
+            button: {
+              text: 'Learn more',
+              url: '?learn-more',
+            }
+          },
+        ]
+
+      div(class="grid relative" data-animation="floating-cards" style=`--h: ${steps.length}`)
+
+        div(class="h-screen sticky top-100 grid")
+          div(class="absolute -left-[12%] -top-[29.5rem] -z-1")
+            svg(width='1692' height='690' viewbox='0 0 1692 690' fill='none' xmlns='http://www.w3.org/2000/svg' class="w-[169.2rem] h-auto")
+
+              path(d='M26.8463 449.429C157.723 389.516 329.582 357.372 446.113 407.544C490.801 426.787 521.809 464.933 560.328 493.076C611.846 530.724 677.171 562.968 742.365 561.448C917.905 557.35 1052.63 411.596 1185.59 316.045C1242.33 275.273 1300.32 311.153 1362.29 308.825C1449.01 305.571 1543.86 265.687 1600.1 198.012C1651.49 136.182 1629.52 76.7125 1620.68 5.00168' stroke='url(#paint1_linear_901_229)' stroke-width='2' stroke-miterlimit='10' data-path-to-follow='')
+              defs
+                lineargradient#paint1_linear_901_229(x1='35.5487' y1='496.626' x2='1656.23' y2='197.8' gradientunits='userSpaceOnUse')
+                  stop(offset='0.0827743' stop-color='#E6E6E1')
+                  stop(offset='0.324141' stop-color='#E6E6E1' stop-opacity='0')
+                  stop(offset='0.674873' stop-color='#E6E6E1' stop-opacity='0.3')
+                  stop(offset='0.935979' stop-color='#E6E6E1')
+          each item, index in steps
+            div(class="col-start-1 col-end-1 row-start-1 row-end-1" data-floating-card='')
+              div(class="flex justify-center mb-70")
+                +picture({
+                  url: item.image,
+                  local: true,
+                  width: 567,
+                  height: 320,
+                  pictureClass: 'max-w-[50rem]',
+                  attr: {
+                    'data-image': ''
+                  }
+                })
+
+              div(class="text-center max-w-[61rem] mx-auto")
+                h2(class="mb-15" data-title='')
+                  | !{item.title}
+                p(class="mb-30" data-text='')
+                  | !{item.text}
+
+                div(class="flex justify-center" data-button='')
+                  +button({
+                    text: item.button.text,
+                    external: true,
+                    attr: {
+                      href: item.button.url,
+                    }
+                  })
+

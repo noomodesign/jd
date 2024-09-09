@@ -1,0 +1,35 @@
+@keyframes logo-fade {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+[data-header] {
+  @include transition(opacity, 2s);
+  opacity: 0;
+
+  .is-loaded & {
+    opacity: 1;
+  }
+}
+
+.header-logo {
+  &:hover {
+    path {
+      @for $i from 1 through 7 {
+        &:nth-child(#{$i}) {
+          animation: logo-fade 1.2s ease-in-out;
+          animation-delay: $i * 0.1s;
+        }
+      }
+    }
+  }
+}

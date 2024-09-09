@@ -1,0 +1,40 @@
+include ../_global/mixins.pug
+
+block variables
+
+block debug
+
+
+doctype html
+html(lang=page.locale || site.DEFAULT_LOCALE class="is-loading" style=`--cursor-x: -0.5; --cursor-y: -0.5;}`)
+  include ../_global/head
+
+  body(class=bodyClass)
+    div(class="wrapper" data-scroll-wrapper='' id="top")
+
+      div(class="page-holder relative" data-scroller='')
+        include ../_partials/header
+        div(data-transitions-container='' class="flex flex-col min-h-screen")
+          main(class="main")
+            block content
+
+          block popupLocal
+
+          include ../_partials/footer
+
+    div(class="cursor")
+      div(class="cursor__inner")
+
+    canvas(data-background='' class="fixed left-0 top-0 w-screen h-screen -z-5")
+
+    script(defer='' src=assets['main.js'] data-swup-ignore-script='')
+    if site.GA && site.production
+      script(async src=`https://www.googletagmanager.com/gtag/js?id=${site.GA}` data-swup-ignore-script='')
+      script(async data-swup-ignore-script='').
+        var ID = "#{site.GA}"
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', ID);
+
+  | !{filters.svgsprite()}

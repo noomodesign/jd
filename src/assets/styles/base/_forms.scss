@@ -1,0 +1,164 @@
+// stylelint-disable selector-no-qualifying-type, selector-max-compound-selectors
+
+// -----------------------------------------------------------------------------
+// This file contains all styles related to the form elements of the site
+// -----------------------------------------------------------------------------
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 20rem var(--theme-bg) inset !important;
+  -webkit-text-fill-color: var(--theme-color) !important;
+
+  .bg-gray & {
+    -webkit-box-shadow: 0 0 0px 20rem $gray inset !important;
+  }
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0;
+  /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+.custom-inline-checkbox {
+  font-weight: var(--wght);
+  position: relative;
+
+  // height: 4rem;
+  // border-radius: 1.5rem;
+  overflow: hidden;
+  // padding: 0.8rem 1.5rem;
+  // font-size: 1.6rem;
+
+  // @include media('screen', '>=laptop') {
+  //   height: 5.4rem;
+  //   padding: 1rem 2rem;
+  //   font-size: 2.2rem;
+  // }
+
+  .checked-label {
+    @include transition(opacity);
+    // position: absolute;
+    // right: 0;
+    // top: 0;
+    // bottom: 0;
+    // display: flex;
+    // align-items: center;
+    font-size: 1.2rem;
+    margin-left: auto;
+    opacity: 0;
+
+    @include media('screen', '>=desktop') {
+      font-size: 1.4rem;
+    }
+  }
+
+  input {
+    &:checked {
+      ~ .custom-inline-checkbox__bg {
+        &:after {
+          opacity: 0.2;
+        }
+      }
+      // ~ .checked-label {
+      //   opacity: 1;
+      //   &:after {
+      //     content: 'Selected';
+      //   }
+      // }
+    }
+  }
+
+  &:hover {
+    // .checked-label {
+    //   opacity: 1;
+    //   &:after {
+    //     content: 'Select';
+    //   }
+    // }
+
+    .custom-inline-checkbox__bg {
+      &:after {
+        opacity: 0.2;
+      }
+    }
+  }
+
+  // .truncate {
+  // }
+
+  &.is-disabled {
+    pointer-events: none;
+
+    .truncate {
+      @include transition(opacity);
+      opacity: 0.4;
+    }
+  }
+
+  &.is-included {
+    pointer-events: none;
+
+    .checked-label {
+      &:after {
+        content: 'Included' !important;
+      }
+    }
+  }
+
+  .unavailable-el {
+    @include transition(opacity);
+  }
+
+  &.unavailable {
+    pointer-events: none;
+
+    .unavailable-el {
+      opacity: 0.2;
+    }
+  }
+}
+
+.custom-inline-checkbox__bg {
+  position: absolute;
+  pointer-events: none;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+
+  &:after {
+    @include transition(opacity);
+    border: 1px solid var(--theme-color);
+    content: '';
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    position: absolute;
+    opacity: 0;
+  }
+
+  &:before {
+    content: '';
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    position: absolute;
+    background: var(--theme-color);
+    opacity: 0.05;
+  }
+}

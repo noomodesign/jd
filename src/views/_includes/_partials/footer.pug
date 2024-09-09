@@ -1,0 +1,93 @@
+mixin social-list()
+  -
+    var items = [
+      {
+        icon: 'facebook',
+        href: '?faceook',
+      },
+      {
+        icon: 'twitter',
+        href: '?twitter',
+      },
+      {
+        icon: 'instagram',
+        href: '?instagram',
+      },
+    ]
+
+  ul(class="flex flex-wrap gap-x-40")
+    each item in items
+      li(class="social-list__item")
+        a(class="social-list__link" target="_blank" href=item.href)
+          | !{filters.svg(item.icon)}
+
+mixin footer-nav()
+  -
+    var items = [
+      {
+        text: 'Terms',
+        href: '?terms',
+      },
+      {
+        text: 'Privacy Policy',
+        href: '?privacy',
+      },
+      {
+        text: 'Cookies',
+        href: '?cookies',
+      },
+    ]
+
+  ul(class="flex flex-wrap gap-x-40")
+    each item in items
+      li(class="footer-nav__item")
+        a(class="footer-nav__link link opacity-50 hover:opacity-100" target="_blank" href=item.href)
+          | !{item.text}
+
+
+mixin contact-form()
+  form(action="post" data-form="contacts-short")
+    p(class="mb-5" data-animation="split") Let's connect.
+    div(data-animation="moveUp")
+      +form-control({
+        type: 'email',
+        attr: {
+          required: true,
+          placeholder: 'Your contact email'
+        }
+      })
+    div(class="mt-40" data-animation="moveUp")
+      +button({
+        type: 'submit',
+        text: 'Contact Jasmina',
+      })
+
+
+
+footer(class="w-full -mt-[30svh] relative overflow-hidden" )
+  div(class="container-lg relative pb-40 pt-[70vh]" data-animation="ball-fall")
+    div(data-waves='' class="absolute left-0 top-0 w-screen h-full overflow-hidden pointer-events-none")
+
+    div(class="relative max-w-[65rem] mx-auto")
+      h2(class="h1 uppercase mb-120 text-center" data-animation="split") Wanna get <br> in touch?
+      div(data-circle-movement='' class="absolute left-0 w-full flex justify-center")
+        div(data-circle-rotate='')
+          +story-circle('footer', {color: '#E6E6E1', rotationDuration: '0s'})
+
+    div(class="grid grid-cols-2 gap-x-[30%] mb-90")
+      div
+        p(class="mb-40 max-w-350 text-base md:text-md" data-animation="split") Stay connected. Reach out with questions, opportunities, or to learn more about our journey.
+        +social-list()
+      div
+        +contact-form()
+
+    div(class="grid grid-cols-2 gap-x-[30%]" data-animation="fade")
+      div
+        +footer-nav()
+      div(class="flex justify-between")
+        span(class="opacity-50") &copy; #{site.YEAR}  All Rights Reserved
+        span(data-scroll-to="top" class="link opacity-50 hover:opacity-100") Back to top
+
+  span(class="h-8 animated-gradient w-full absolute left-0 bottom-0")
+
+

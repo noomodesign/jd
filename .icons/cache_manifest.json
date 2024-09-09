@@ -1,0 +1,38 @@
+{
+  "imageResult.json": {
+    "name": "imageResult.json",
+    "pathToContent": ".icons/imageResult.json"
+  },
+  "apple-icon-180.png": {
+    "name": "apple-icon-180.png",
+    "pathToContent": ".icons/apple-icon-180.png"
+  },
+  "favicon-196.png": {
+    "name": "favicon-196.png",
+    "pathToContent": ".icons/favicon-196.png"
+  },
+  "manifest-icon-192.maskable.png": {
+    "name": "manifest-icon-192.maskable.png",
+    "pathToContent": ".icons/manifest-icon-192.maskable.png"
+  },
+  "manifest-icon-512.maskable.png": {
+    "name": "manifest-icon-512.maskable.png",
+    "pathToContent": ".icons/manifest-icon-512.maskable.png"
+  },
+  "mstile-icon-128.png": {
+    "name": "mstile-icon-128.png",
+    "pathToContent": ".icons/mstile-icon-128.png"
+  },
+  "mstile-icon-270.png": {
+    "name": "mstile-icon-270.png",
+    "pathToContent": ".icons/mstile-icon-270.png"
+  },
+  "mstile-icon-558-270.png": {
+    "name": "mstile-icon-558-270.png",
+    "pathToContent": ".icons/mstile-icon-558-270.png"
+  },
+  "mstile-icon-558.png": {
+    "name": "mstile-icon-558.png",
+    "pathToContent": ".icons/mstile-icon-558.png"
+  }
+}

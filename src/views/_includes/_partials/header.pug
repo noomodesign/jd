@@ -1,0 +1,48 @@
+-
+  var menu = [
+    {
+      text: 'About',
+      href: site.pages.about,
+    },
+    {
+      text: 'Ventures',
+      href: site.pages.ventures,
+    },
+    {
+      text: 'Longevity Intelligence',
+      href: site.pages.longevity,
+    },
+    {
+      text: 'Explore',
+      href: site.pages.explore,
+    },
+    {
+      text: 'Contact',
+      href: site.pages.contact,
+    },
+  ]
+
+header(class="fixed py-25 top-0 left-0 w-full text-cream z-3" data-header='')
+  div(class="container flex items-center")
+    div(class="w-1/5")
+      a(href=site.pages.home class="header-logo")
+        +custom-icon({type: 'logo', attr: {class: 'w-[9.9rem] h-auto'}})
+    div(class="w-[60%] flex justify-center")
+      ul(class="nav flex gap-x-40 text-base pl-[4.3rem]")
+        each item in menu
+          li
+            a(href=item.href class="link")
+              | !{item.text}
+    div(class="w-1/5 flex justify-end")
+      +button({
+        text: 'Contact',
+        attr: {
+          class: 'w-[16.8rem]',
+          href: site.pages.contact
+        }
+      })
+
+
+
+
+

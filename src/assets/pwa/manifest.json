@@ -1,0 +1,11 @@
+{
+  "name": "Template",
+  "short_name": "template",
+  "description": "Our starting point",
+  "theme_color": "#336CFF",
+  "background_color": "#000000",
+  "start_url": "/",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait"
+}

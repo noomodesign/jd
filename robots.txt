@@ -1,0 +1,4 @@
+Sitemap: https://jasmina.netlify.app/sitemap.xml
+Host: /
+User-agent: *
+Disallow:

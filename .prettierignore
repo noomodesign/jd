@@ -1,0 +1,5 @@
+src/assets/styles/*.scss
+src/assets/styles/vendors/*
+src/assets/styles/vendors-extensions/*
+src/assets/styles/base/*
+src/assets/js/vendors/*
